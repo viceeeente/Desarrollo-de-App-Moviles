@@ -3,7 +3,9 @@ package com.example.lvlupfinal.model
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.ui.graphics.vector.ImageVector
+
 /**
  * Clase sellada que representa todas las pantallas de la aplicación.
  * Usamos "sealed class" para que solo podamos definir aquí las pantallas válidas.
@@ -28,5 +30,11 @@ sealed class Screen(
         route = "detail", // Identificador único
         title = "Detalle", // Título que se muestra
         icon = Icons.AutoMirrored.Filled.List // Icono de la barra inferior
+    )
+
+    object Users : Screen(
+        route = "users",
+        title = "Usuarios",
+        icon = Icons.Filled.Person
     )
 }
