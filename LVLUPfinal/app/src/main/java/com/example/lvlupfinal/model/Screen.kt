@@ -2,7 +2,9 @@ package com.example.lvlupfinal.model
 // Importamos iconos de Material Design y el tipo ImageVector para representarlos en Compose
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.ui.graphics.vector.ImageVector
 
@@ -29,12 +31,24 @@ sealed class Screen(
     object Detail : Screen(
         route = "detail", // Identificador único
         title = "Detalle", // Título que se muestra
-        icon = Icons.AutoMirrored.Filled.List // Icono de la barra inferior
+        icon = Icons.Filled.Info // Icono de la barra inferior
     )
 
     object Users : Screen(
         route = "users",
         title = "Usuarios",
         icon = Icons.Filled.Person
+    )
+
+    object Register : Screen(
+        route = "register",
+        title = "Registro",
+        icon = Icons.Filled.AccountBox
+    )
+
+    object Resume : Screen(
+        route = "resume",
+        title = "Resumen",
+        icon = Icons.Filled.Menu
     )
 }

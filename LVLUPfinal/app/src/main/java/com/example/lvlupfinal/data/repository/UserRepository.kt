@@ -4,10 +4,10 @@ import com.example.lvlupfinal.data.local.User
 import com.example.lvlupfinal.data.local.UserDao
 import kotlinx.coroutines.flow.Flow
 
-class UserRepository(private val dao: UserDao) {
-    val users: Flow<List<User>> = dao.getAllUsers()
+class UserRepository(private val userDao: UserDao) {
+    val users: Flow<List<User>> = userDao.getAllUsers()
 
-    suspend fun  insert(user: User) = dao.insertUser(user)
-    suspend fun  update(user: User) = dao.updateUser(user)
-    suspend fun  delete(user: User) = dao.deleteUser(user)
+    suspend fun  insert(user: User) = userDao.insertUser(user)
+    suspend fun  update(user: User) = userDao.updateUser(user)
+    suspend fun  delete(user: User) = userDao.deleteUser(user)
 }

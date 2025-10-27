@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.lvlupfinal.data.local.AppDataBase
+import com.example.lvlupfinal.data.local.AppDatabase
 import com.example.lvlupfinal.data.local.User
 import com.example.lvlupfinal.data.repository.UserRepository
 import com.example.lvlupfinal.viewmodel.UserViewModel
@@ -22,7 +22,7 @@ import com.example.lvlupfinal.viewmodel.UserViewModelFactory
 @Composable
 fun UserScreen(modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    val dao = AppDataBase.getInstance(context).userDao()
+    val dao = AppDatabase.getInstance(context).userDao()
     val repository = UserRepository(dao)
     val factory = UserViewModelFactory(repository)
     val viewModel: UserViewModel = viewModel(factory = factory)
