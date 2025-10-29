@@ -10,13 +10,11 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.lvlupfinal.ui.common.BottonNavBar
 import com.example.lvlupfinal.ui.home.HomeScreen
-import com.example.lvlupfinal.ui.detail.DetailScreen
-import com.example.lvlupfinal.ui.users.UserScreen
 import com.example.lvlupfinal.model.Screen
-import com.example.lvlupfinal.ui.users.RegisterScreen
-import com.example.lvlupfinal.ui.users.ResumeScreen
 import com.example.lvlupfinal.viewmodel.SharedViewModel
 import com.example.lvlupfinal.viewmodel.UserViewModel
+import  com.example.lvlupfinal.ui.shoppingcart.ShoppingCart
+
 
 @Composable
 fun AppNavigation(
@@ -29,25 +27,16 @@ fun AppNavigation(
 
     val allItems = listOf(
         Screen.Home,
-        Screen.Register,
-        Screen.Resume,
-        Screen.Detail,
-        Screen.Users
+        Screen.ShoppingCart
     )
 
-    val visibleItems = if (isLoggedIn) {
-        allItems.filterNot { it.route == Screen.Register.route || it.route == Screen.Resume.route || it.route == Screen.Users.route }
-    } else {
-        allItems
-    }
-
-    val currentScreen = visibleItems.find { it.route == currentScreenRoute }?: Screen.Home
+    val currentScreen = allItems.find { it.route == currentScreenRoute }?: Screen.Home
 
     Scaffold(
         bottomBar = {
             BottonNavBar(
-                items = visibleItems,
-                currentScreen = visibleItems.find { it.route == currentScreenRoute } ?: Screen.Home,
+                items = allItems,
+                currentScreen = allItems.find { it.route == currentScreenRoute } ?: Screen.Home,
                 onItemSelected = { screen ->
                     sharedViewModel.onBottonNavSelected(screen.route)
                 }
@@ -59,27 +48,12 @@ fun AppNavigation(
                 modifier = Modifier.padding(contentPadding),
                 viewModel = sharedViewModel
             )
-            Screen.Detail.route -> DetailScreen(
+            Screen.ShoppingCart.route -> ShoppingCart(
                 modifier = Modifier.padding(contentPadding),
                 viewModel = sharedViewModel
             ) {
                 sharedViewModel.onBottonNavSelected(Screen.Home.route)
             }
-            Screen.Users.route -> UserScreen(
-                modifier = Modifier.padding(contentPadding),
-                sharedViewModel = sharedViewModel,
-                viewModel = userViewModel
-            )
-            Screen.Resume.route -> ResumeScreen(
-                modifier = Modifier.padding(contentPadding),
-                navController = navController,
-                viewModel = userViewModel
-            )
-            Screen.Register.route -> RegisterScreen(
-                modifier = Modifier.padding(contentPadding),
-                sharedViewModel = sharedViewModel,
-                viewModel = userViewModel
-            )
             else -> HomeScreen(
                 modifier = Modifier.padding(contentPadding),
                 viewModel = sharedViewModel

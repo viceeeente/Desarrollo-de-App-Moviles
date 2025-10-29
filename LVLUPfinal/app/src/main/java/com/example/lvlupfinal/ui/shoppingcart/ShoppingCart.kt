@@ -1,4 +1,4 @@
-package com.example.lvlupfinal.ui.detail
+package com.example.lvlupfinal.ui.shoppingcart
 // Importamos librerías necesarias de Compose y Material3
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -13,6 +13,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.example.lvlupfinal.model.Screen
+
 /**
  * Composable que muestra la pantalla de detalle de un item seleccionado.
  *
@@ -22,7 +24,7 @@ import androidx.compose.material3.IconButton
  */
 @OptIn(ExperimentalMaterial3Api::class) // Para usar TopAppBar de Material3 experimental
 @Composable
-fun DetailScreen(
+fun ShoppingCart(
     modifier: Modifier = Modifier,
     viewModel: SharedViewModel = viewModel(),
     onBack: () -> Unit = {}
