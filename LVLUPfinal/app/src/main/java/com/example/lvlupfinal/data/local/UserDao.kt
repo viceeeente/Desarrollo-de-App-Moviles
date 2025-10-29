@@ -13,12 +13,18 @@ interface UserDao {
     @Query("SELECT * FROM users ORDER BY id DESC")
     fun getAllUsers(): Flow<List<User>>
 
+    @Query("SELECT * FROM users WHERE id = :id LIMIT 1")
+    suspend fun getUserById(id: Int): User?
+
+    @Query("SELECT * FROM users ORDER BY id DESC LIMIT 1")
+    suspend fun getLastUser(): User?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun  insertUser(user: User)
+    suspend fun insertUser(user: User): Long
 
     @Update
-    suspend fun  updateUser(user: User)
+    suspend fun updateUser(user: User)
 
     @Delete
-    suspend fun  deleteUser(user: User)
+    suspend fun deleteUser(user: User)
 }

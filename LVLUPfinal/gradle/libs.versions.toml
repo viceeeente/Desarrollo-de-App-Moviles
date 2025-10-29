@@ -16,6 +16,7 @@ material3AdaptiveNav3 = "1.0.0-alpha03"
 coroutines = "1.8.1" # o la última estable
 material3 = "1.2.0"
 material3-window = "1.2.0"
+foundation = "1.9.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -41,6 +42,7 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 compose-material3-window = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3-window" }
+androidx-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -28,7 +29,9 @@ fun ResumeScreen(
     Column (
         modifier = modifier.padding(all = 16.dp)
     ){
-        Text(text = "Resumen del registro", style = MaterialTheme.typography.headlineMedium)
+        Text(text = "Resumen del registro",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.align(Alignment.CenterHorizontally))
         Text(text = "Nombre: ${state.name}")
         Text(text = "Correo: ${state.email}" )
         Text(text = "Direccion: ${state.address}")

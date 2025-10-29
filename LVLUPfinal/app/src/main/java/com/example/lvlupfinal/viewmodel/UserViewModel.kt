@@ -6,12 +6,14 @@ import com.example.lvlupfinal.data.local.User
 import com.example.lvlupfinal.data.repository.UserRepository
 import com.example.lvlupfinal.model.UserErrors
 import com.example.lvlupfinal.model.UserUiState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class UserViewModel(private val repository: UserRepository) : ViewModel() {
 
@@ -30,6 +32,22 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
             repository.insert(User(name=name,age=age))
         }
     }
+
+    suspend fun addUserReturn(name: String, age: Int): User? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val id = repository.insert(User(name = name, age = age))
+                if (id > 0L) {
+                    repository.getUserById(id.toInt()) ?: repository.getLastUser()
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
+
 
     fun deleteUser(user: User) {
         viewModelScope.launch {

@@ -2,13 +2,12 @@ package com.example.lvlupfinal.ui.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.lvlupfinal.viewmodel.SharedViewModel
 import com.example.lvlupfinal.ui.common.BottonNavBar
 import com.example.lvlupfinal.ui.home.HomeScreen
 import com.example.lvlupfinal.ui.detail.DetailScreen
@@ -16,57 +15,74 @@ import com.example.lvlupfinal.ui.users.UserScreen
 import com.example.lvlupfinal.model.Screen
 import com.example.lvlupfinal.ui.users.RegisterScreen
 import com.example.lvlupfinal.ui.users.ResumeScreen
+import com.example.lvlupfinal.viewmodel.SharedViewModel
 import com.example.lvlupfinal.viewmodel.UserViewModel
 
 @Composable
 fun AppNavigation(
     navController: NavController,
-    viewModel: SharedViewModel = viewModel(),
-    userViewModel: UserViewModel = viewModel()
+    sharedViewModel: SharedViewModel,
+    userViewModel: UserViewModel
 ) {
-    val currentScreenRoute by viewModel.currentScreen.collectAsState()
+    val currentScreenRoute by sharedViewModel.currentScreen.collectAsState()
+    val isLoggedIn by sharedViewModel.isLoggedIn.collectAsState()
+
+    val allItems = listOf(
+        Screen.Home,
+        Screen.Register,
+        Screen.Resume,
+        Screen.Detail,
+        Screen.Users
+    )
+
+    val visibleItems = if (isLoggedIn) {
+        allItems.filterNot { it.route == Screen.Register.route || it.route == Screen.Resume.route || it.route == Screen.Users.route }
+    } else {
+        allItems
+    }
+
+    val currentScreen = visibleItems.find { it.route == currentScreenRoute }?: Screen.Home
 
     Scaffold(
         bottomBar = {
             BottonNavBar(
-                items = listOf(Screen.Home, Screen.Detail, Screen.Users, Screen.Resume, Screen.Register),
-                currentScreen = when (currentScreenRoute) {
-                    "home" -> Screen.Home
-                    "detail" -> Screen.Detail
-                    "users" -> Screen.Users
-                    "resume" -> Screen.Resume
-                    "register" -> Screen.Register
-                    else -> Screen.Home
-                },
+                items = visibleItems,
+                currentScreen = visibleItems.find { it.route == currentScreenRoute } ?: Screen.Home,
                 onItemSelected = { screen ->
-                    viewModel.onBottonNavSelected(screen.route)
+                    sharedViewModel.onBottonNavSelected(screen.route)
                 }
             )
         }
-    ) { padding ->
+    ) { contentPadding ->
         when (currentScreenRoute) {
-            "home" -> HomeScreen(
-                modifier = Modifier.padding(padding),
-                viewModel = viewModel
+            Screen.Home.route -> HomeScreen(
+                modifier = Modifier.padding(contentPadding),
+                viewModel = sharedViewModel
             )
-            "detail" -> DetailScreen(
-                modifier = Modifier.padding(padding),
-                viewModel = viewModel
+            Screen.Detail.route -> DetailScreen(
+                modifier = Modifier.padding(contentPadding),
+                viewModel = sharedViewModel
             ) {
-                viewModel.onBottonNavSelected("home")
+                sharedViewModel.onBottonNavSelected(Screen.Home.route)
             }
-            "users" -> UserScreen(
-                modifier = Modifier.padding(padding),
+            Screen.Users.route -> UserScreen(
+                modifier = Modifier.padding(contentPadding),
+                sharedViewModel = sharedViewModel,
+                viewModel = userViewModel
             )
-            "resume" -> ResumeScreen(
-                modifier = Modifier.padding(padding),
+            Screen.Resume.route -> ResumeScreen(
+                modifier = Modifier.padding(contentPadding),
                 navController = navController,
                 viewModel = userViewModel
             )
-            "register" -> RegisterScreen(
-                modifier = Modifier.padding(padding),
-                sharedViewModel = viewModel,
+            Screen.Register.route -> RegisterScreen(
+                modifier = Modifier.padding(contentPadding),
+                sharedViewModel = sharedViewModel,
                 viewModel = userViewModel
+            )
+            else -> HomeScreen(
+                modifier = Modifier.padding(contentPadding),
+                viewModel = sharedViewModel
             )
         }
     }

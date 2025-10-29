@@ -7,137 +7,71 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.lvlupfinal.data.local.AppDatabase
 import com.example.lvlupfinal.data.local.User
-import com.example.lvlupfinal.data.repository.UserRepository
+import com.example.lvlupfinal.viewmodel.SharedViewModel
 import com.example.lvlupfinal.viewmodel.UserViewModel
-import com.example.lvlupfinal.viewmodel.UserViewModelFactory
 
 @Composable
-fun UserScreen(modifier: Modifier = Modifier) {
-    val context = LocalContext.current
-    val dao = AppDatabase.getInstance(context).userDao()
-    val repository = UserRepository(dao)
-    val factory = UserViewModelFactory(repository)
-    val viewModel: UserViewModel = viewModel(factory = factory)
+fun UserScreen(
+    modifier: Modifier = Modifier,
+    sharedViewModel: SharedViewModel,
+    viewModel: UserViewModel
+) {
 
-    val users by viewModel.users.collectAsState(initial = emptyList())
+    val users by viewModel.users.collectAsState()
 
-    var name by remember { mutableStateOf("") }
-    var age by remember { mutableStateOf("") }
+    Column(modifier = modifier.padding(16.dp),
+    horizontalAlignment = Alignment.CenterHorizontally){
 
-    var showEditDialog by remember { mutableStateOf(false) }
-    var userToEdit by remember { mutableStateOf<User?>(null) }
-    var newName by remember { mutableStateOf("") }
-    var newAge by remember { mutableStateOf("") }
+        Text(text = "Usuarios",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.align(Alignment.CenterHorizontally))
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text("Usuarios", style = MaterialTheme.typography.headlineSmall)
-        Spacer(Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            TextField(
-                value = name,
-                onValueChange = { name = it },
-                label = { Text("Nombre") },
-                modifier = Modifier.weight(1f)
-            )
-            Spacer(Modifier.width(8.dp))
-            TextField(
-                value = age,
-                onValueChange = { age = it },
-                label = { Text("Edad") },
-                modifier = Modifier.width(80.dp)
-            )
-            Spacer(Modifier.width(8.dp))
-            Button(onClick = {
-                if (name.isNotBlank() && age.isNotBlank()) {
-                    viewModel.addUser(name, age.toInt())
-                    name = ""
-                    age = ""
-                }
-            }) {
-                Text("Agregar")
-            }
-        }
-
-        Spacer(Modifier.height(16.dp))
-
-        LazyColumn {
-            items(users) { user ->
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(users) { user: User ->
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                    shape = MaterialTheme.shapes.medium
                 ) {
-                    Text("${user.name} (${user.age})")
-                    Row {
-                        IconButton(onClick = {
-                            userToEdit = user
-                            newName = user.name
-                            newAge = user.age.toString()
-                            showEditDialog = true
-                        }) {
-                            Icon(Icons.Default.Edit, contentDescription = "Editar")
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column {
+                            Text(text = user.name, style = MaterialTheme.typography.titleMedium)
+                            Text(text = "Edad: ${user.age}", style = MaterialTheme.typography.bodySmall)
                         }
-                        IconButton(onClick = { viewModel.deleteUser(user) }) {
-                            Icon(Icons.Default.Delete, contentDescription = "Eliminar")
+
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            IconButton(onClick = {
+                            }) {
+                                Icon(Icons.Default.Edit, contentDescription = "Editar")
+                            }
+                            IconButton(onClick = {
+                                viewModel.deleteUser(user)
+                            }) {
+                                Icon(Icons.Default.Delete, contentDescription = "Eliminar")
+                            }
                         }
                     }
                 }
-                HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
             }
         }
-    }
-
-    if (showEditDialog && userToEdit != null) {
-        AlertDialog(
-            onDismissRequest = { showEditDialog = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    userToEdit?.let {
-                        viewModel.updateUser(it, newName, newAge.toIntOrNull() ?: it.age)
-                    }
-                    showEditDialog = false
-                }) {
-                    Text("Guardar")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showEditDialog = false }) {
-                    Text("Cancelar")
-                }
-            },
-            title = { Text("Editar usuario") },
-            text = {
-                Column {
-                    TextField(
-                        value = newName,
-                        onValueChange = { newName = it },
-                        label = { Text("Nombre") },
-                        singleLine = true
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    TextField(
-                        value = newAge,
-                        onValueChange = { newAge = it },
-                        label = { Text("Edad") },
-                        singleLine = true
-                    )
-                }
-            }
-        )
     }
 }

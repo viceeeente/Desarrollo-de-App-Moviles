@@ -1,116 +1,119 @@
 package com.example.lvlupfinal.ui.users
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.lvlupfinal.data.local.User
+import com.example.lvlupfinal.model.Screen
 import com.example.lvlupfinal.viewmodel.SharedViewModel
 import com.example.lvlupfinal.viewmodel.UserViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun RegisterScreen(
     modifier: Modifier = Modifier,
     sharedViewModel: SharedViewModel,
-    viewModel: UserViewModel
-){
-    val state by viewModel.state.collectAsState()
+    viewModel: UserViewModel = viewModel()
+) {
+    var name by remember { mutableStateOf("") }
+    var ageText by remember { mutableStateOf("") }
+    var isSubmitting by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    val scope = rememberCoroutineScope()
 
-    Column (
+    Column(
         modifier = modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .padding(16.dp),
-        verticalArrangement =  Arrangement.spacedBy(12.dp)
-    ){
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Text(
+            text = "Iniciar Sesión",
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+
         OutlinedTextField(
-            value = state.name,
-            onValueChange = viewModel::onNameChange,
+            value = name,
+            onValueChange = {
+                name = it
+                if (errorMessage != null) errorMessage = null
+            },
             label = { Text("Nombre") },
-            isError = state.errores.name != null,
-            supportingText = {
-                state.errores.name?.let {
-                    Text(it, color = MaterialTheme.colorScheme.error)
-                }
-            },
+            singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
 
         OutlinedTextField(
-            value = state.email,
-            onValueChange = viewModel::onEmailChange,
-            label = { Text("Correo Electrónico")},
-            isError = state.errores.email!= null,
-            supportingText = {
-                state.errores.email?.let{
-                    Text(it,color= MaterialTheme.colorScheme.error)
-                }
+            value = ageText,
+            onValueChange = {
+                ageText = it.filter { ch -> ch.isDigit() }
+                if (errorMessage != null) errorMessage = null
             },
+            label = { Text("Edad") },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
         )
 
-        OutlinedTextField(
-            value = state.password,
-            onValueChange = viewModel::onPasswordChange,
-            label = {Text("Contraseña")},
-            visualTransformation = PasswordVisualTransformation(),
-            isError = state.errores.password!= null,
-            supportingText = {
-                state.errores.password?.let{
-                    Text(it, color = MaterialTheme.colorScheme.error)
-                }
-            },
-            modifier = Modifier.fillMaxWidth()
-        )
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+            Button(
+                onClick = {
+                    val age = ageText.toIntOrNull() ?: 0
+                    when {
+                        name.isBlank() -> {
+                            errorMessage = "El nombre no puede estar vacío"
+                            return@Button
+                        }
+                        age <= 0 -> {
+                            errorMessage = "Ingresa una edad válida"
+                            return@Button
+                        }
+                        age < 18 -> {
+                            errorMessage = "Debes ser mayor o igual a 18 años"
+                            return@Button
+                        }
+                    }
 
-        OutlinedTextField(
-            value = state.address,
-            onValueChange = viewModel::onAddresChange,
-            label = {Text("Dirección")},
-            isError = state.errores.address!= null,
-            supportingText = {
-                state.errores.address?.let{
-                    Text(it,color = MaterialTheme.colorScheme.error)
-                }
-            },
-            modifier = Modifier.fillMaxWidth()
-        )
+                    isSubmitting = true
+                    errorMessage = null
 
-        Row (
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            Checkbox(
-                checked = state.acceptTerms,
-                onCheckedChange = viewModel::onAcceptTermns
-            )
-            Spacer(Modifier.width(8.dp))
-            Text("Acepto lo términos y condiciones")
+                    scope.launch {
+                        val created: User? = viewModel.addUserReturn(name.trim(), age)
+
+                        withContext(Dispatchers.Main) {
+                            if (created != null) {
+                                sharedViewModel.setCurrentUser(created)
+                                sharedViewModel.onBottonNavSelected(Screen.Home.route)
+                            } else {
+                                errorMessage = "Error al crear el usuario"
+                            }
+                            isSubmitting = false
+                        }
+                    }
+                },
+                enabled = !isSubmitting,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(if (isSubmitting) "Registrando..." else "Registrar / Entrar")
+            }
         }
 
-        Button(
-            onClick = {
-                if(viewModel.formValidation()){
-                    sharedViewModel.onBottonNavSelected("home")
-                }
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Registrar")
+        if (!errorMessage.isNullOrBlank()) {
+            Text(
+                text = errorMessage!!,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(top = 4.dp)
+            )
         }
     }
 }

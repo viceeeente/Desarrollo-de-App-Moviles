@@ -1,8 +1,12 @@
 package com.example.lvlupfinal.viewmodel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.lvlupfinal.data.local.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+
 // Estado de la pantalla Home (lista de items de ejemplo)
 data class HomeUiState(
     val items: List<String> = listOf("1", "2", "3")
@@ -39,15 +43,40 @@ class SharedViewModel : ViewModel() {
      * - Guardamos el id del item seleccionado
      * - Cambiamos la pantalla a "detail"
      */
+    private val _isLoggedIn = MutableStateFlow(false)
+    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
+
+    // Estado mínimo para el usuario activo
+    private val _currentUser = MutableStateFlow<User?>(null)
+    val currentUser: StateFlow<User?> = _currentUser.asStateFlow()
+
     fun onItemClick(id: String) {
         _selectedItemId.value = id
         _currentScreen.value = "detail"
     }
-    /**
-     * Cambiamos la pantalla actual al seleccionar
-     * un ítem en el BottomNavigation.
-     */
+
     fun onBottonNavSelected(route: String) {
         _currentScreen.value = route
     }
+
+    fun setLoggedIn(value: Boolean) {
+        _isLoggedIn.value = value
+    }
+
+    fun setCurrentUser(user: User?) {
+        _currentUser.value = user
+        _isLoggedIn.value = user != null
+    }
+
+    // Helper para escenarios donde desde la UI querés setear el user id en background
+    fun setCurrentUserFromRepo(load: suspend () -> User?) {
+        viewModelScope.launch {
+            val user = load()
+            _currentUser.value = user
+            _isLoggedIn.value = user != null
+        }
+    }
+
+
+
 }

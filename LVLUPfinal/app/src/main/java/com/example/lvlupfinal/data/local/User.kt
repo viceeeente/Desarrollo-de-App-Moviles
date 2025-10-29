@@ -9,3 +9,6 @@ data class User(
     val name: String,
     val age: Int
 )
+/*
+Aquí tengo que agregar contraseña igual y que sea de más de 6 caracteres
+*/
