@@ -13,4 +13,7 @@ class UserRepository(private val userDao: UserDao) {
 
     suspend fun getUserById(id: Int): User? = userDao.getUserById(id)
     suspend fun getLastUser(): User? = userDao.getLastUser()
+
+    suspend fun getByEmailAndPassword(email: String, password: String): User? =
+        userDao.getByEmailAndPassword(email, password)
 }

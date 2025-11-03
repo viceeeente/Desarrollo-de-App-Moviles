@@ -1,6 +1,9 @@
 package com.example.lvlupfinal.model
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.ui.graphics.vector.ImageVector
 
@@ -28,6 +31,18 @@ sealed class Screen(
         route = "shoppingcart", // Identificador único
         title = "Carrito", // Título que se muestra
         icon = Icons.Filled.ShoppingCart // Icono de la barra inferior
+    )
+
+
+    object Register : Screen(
+        route = "register",
+        title = "Registro",
+        icon = Icons.Filled.AccountBox
+    )
+    object MoreOptions : Screen(
+        route = "moreoptions",
+        title = "Más",
+        icon = Icons.Filled.Menu
     )
 
 

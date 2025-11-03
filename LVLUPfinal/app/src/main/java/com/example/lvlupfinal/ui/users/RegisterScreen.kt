@@ -18,12 +18,15 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun RegisterScreen(
+fun Register(
     modifier: Modifier = Modifier,
     sharedViewModel: SharedViewModel,
     viewModel: UserViewModel = viewModel()
 ) {
     var name by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var address by remember { mutableStateOf("") }
     var ageText by remember { mutableStateOf("") }
     var isSubmitting by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
@@ -36,7 +39,7 @@ fun RegisterScreen(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(
-            text = "Iniciar Sesión",
+            text = "Registrar",
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
@@ -48,6 +51,41 @@ fun RegisterScreen(
                 if (errorMessage != null) errorMessage = null
             },
             label = { Text("Nombre") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = email,
+            onValueChange = {
+                email = it
+                if (errorMessage != null) errorMessage = null
+            },
+            label = { Text("Email") },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = password,
+            onValueChange = {
+                password = it
+                if (errorMessage != null) errorMessage = null
+            },
+            label = { Text("Contraseña") },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = address,
+            onValueChange = {
+                address = it
+                if (errorMessage != null) errorMessage = null
+            },
+            label = { Text("Dirección") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
@@ -68,9 +106,22 @@ fun RegisterScreen(
             Button(
                 onClick = {
                     val age = ageText.toIntOrNull() ?: 0
+
                     when {
                         name.isBlank() -> {
                             errorMessage = "El nombre no puede estar vacío"
+                            return@Button
+                        }
+                        email.isBlank() || !email.contains("@") -> {
+                            errorMessage = "Ingrese un email válido"
+                            return@Button
+                        }
+                        password.length < 6 -> {
+                            errorMessage = "La contraseña debe tener al menos 6 caracteres"
+                            return@Button
+                        }
+                        address.isBlank() -> {
+                            errorMessage = "La dirección no puede estar vacía"
                             return@Button
                         }
                         age <= 0 -> {
@@ -87,14 +138,20 @@ fun RegisterScreen(
                     errorMessage = null
 
                     scope.launch {
-                        val created: User? = viewModel.addUserReturn(name.trim(), age)
+                        val created: User? = viewModel.addUserReturn(
+                            name = name.trim(),
+                            email = email.trim(),
+                            password = password,
+                            address = address.trim(),
+                            age = age
+                        )
 
                         withContext(Dispatchers.Main) {
                             if (created != null) {
                                 sharedViewModel.setCurrentUser(created)
                                 sharedViewModel.onBottonNavSelected(Screen.Home.route)
                             } else {
-                                errorMessage = "Error al crear el usuario"
+                                errorMessage = "Error al crear o encontrar el usuario"
                             }
                             isSubmitting = false
                         }
@@ -103,7 +160,7 @@ fun RegisterScreen(
                 enabled = !isSubmitting,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(if (isSubmitting) "Registrando..." else "Registrar / Entrar")
+                Text("Registrar")
             }
         }
 

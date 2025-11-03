@@ -7,13 +7,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.lvlupfinal.ui.common.BottonNavBar
 import com.example.lvlupfinal.ui.home.HomeScreen
 import com.example.lvlupfinal.model.Screen
+import com.example.lvlupfinal.more.MoreOptions
 import com.example.lvlupfinal.viewmodel.SharedViewModel
 import com.example.lvlupfinal.viewmodel.UserViewModel
 import  com.example.lvlupfinal.ui.shoppingcart.ShoppingCart
+import com.example.lvlupfinal.ui.users.Register
 
 
 @Composable
@@ -27,10 +30,9 @@ fun AppNavigation(
 
     val allItems = listOf(
         Screen.Home,
-        Screen.ShoppingCart
+        Screen.ShoppingCart,
+        Screen.MoreOptions
     )
-
-    val currentScreen = allItems.find { it.route == currentScreenRoute }?: Screen.Home
 
     Scaffold(
         bottomBar = {
@@ -54,6 +56,15 @@ fun AppNavigation(
             ) {
                 sharedViewModel.onBottonNavSelected(Screen.Home.route)
             }
+            Screen.MoreOptions.route -> MoreOptions(
+                modifier = Modifier.padding(contentPadding),
+                viewModel = sharedViewModel
+            )
+            Screen.Register.route -> Register(
+                modifier = Modifier.padding(contentPadding),
+                sharedViewModel = sharedViewModel,
+                viewModel = userViewModel
+            )
             else -> HomeScreen(
                 modifier = Modifier.padding(contentPadding),
                 viewModel = sharedViewModel

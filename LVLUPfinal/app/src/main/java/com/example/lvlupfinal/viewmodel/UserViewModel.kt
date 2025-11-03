@@ -27,26 +27,55 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
         emptyList()
     )
 
-    fun addUser(name: String, age: Int) {
+    fun addUser(name: String, email: String, password: String, address: String, age: Int) {
         viewModelScope.launch {
-            repository.insert(User(name=name,age=age))
+            repository.insert(
+                User(
+                    name = name,
+                    email = email,
+                    password = password,
+                    address = address,
+                    age = age
+                )
+            )
         }
     }
 
-    suspend fun addUserReturn(name: String, age: Int): User? {
+
+
+    suspend fun addUserReturn(
+        name: String,
+        email: String,
+        password: String,
+        address: String,
+        age: Int
+    ): User? {
         return withContext(Dispatchers.IO) {
             try {
-                val id = repository.insert(User(name = name, age = age))
+                val newUser = User(
+                    name = name,
+                    email = email,
+                    password = password,
+                    address = address,
+                    age = age
+                )
+                val id = repository.insert(newUser)
+                android.util.Log.d("UserVM", "insert returned id=$id for user=$newUser")
                 if (id > 0L) {
+                    val byId = repository.getUserById(id.toInt())
+                    android.util.Log.d("UserVM", "getUserById returned $byId")
                     repository.getUserById(id.toInt()) ?: repository.getLastUser()
                 } else {
+                    android.util.Log.e("UserVM", "insert returned id <= 0")
                     null
                 }
             } catch (e: Exception) {
+                android.util.Log.e("UserVM", "addUserReturn exception", e)
                 null
             }
         }
     }
+
 
 
     fun deleteUser(user: User) {
@@ -81,23 +110,30 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
         _state.update { it.copy(acceptTerms = value) }
     }
 
-    fun formValidation(): Boolean {
-        val actualState = _state.value
+    fun validateForLogin(): Boolean {
+        val s = _state.value
         val errors = UserErrors(
-            name = if(actualState.name.isBlank()) "Campo obligatorio" else null,
-            email = if(!actualState.email.contains("@")) "Correo invalido, falta @" else null,
-            password = if (actualState.password.length < 6) "La contraseña debe tener al menos 6 carácteres" else null,
-            address = if(actualState.address.isBlank())"Campo obligatorio" else null
+            name = null,
+            email = if (s.email.isBlank() || !s.email.contains("@")) "Correo inválido" else null,
+            password = if (s.password.isBlank()) "La contraseña no puede estar vacía" else null,
+            address = null
         )
-
-        val thereAreErrors = listOfNotNull(
-            errors.name,
-            errors.password,
-            errors.address
-        ).isNotEmpty()
-
         _state.update { it.copy(errores = errors) }
-
-        return !thereAreErrors
+        return listOfNotNull(errors.email, errors.password).isEmpty()
     }
+
+    suspend fun getUserByEmailAndPassword(email: String, password: String): User? {
+        return withContext(Dispatchers.IO) {
+            try {
+                repository.getByEmailAndPassword(email.trim(), password)
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
+
+    fun setLoginError(message: String) {
+        _state.update { it.copy(errores = it.errores.copy(email = message)) }
+    }
+
 }

@@ -7,8 +7,9 @@ import androidx.room.PrimaryKey
 data class User(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val name: String,
+    val email: String ,
+    val password: String,
+    val address: String,
     val age: Int
 )
-/*
-Aquí tengo que agregar contraseña igual y que sea de más de 6 caracteres
-*/
+
