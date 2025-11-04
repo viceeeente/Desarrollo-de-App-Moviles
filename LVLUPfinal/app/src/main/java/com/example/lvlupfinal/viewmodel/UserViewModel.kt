@@ -18,30 +18,13 @@ import kotlinx.coroutines.withContext
 class UserViewModel(private val repository: UserRepository) : ViewModel() {
 
     private val _state = MutableStateFlow(UserUiState())
-
     val state: StateFlow<UserUiState> = _state
 
     val users = repository.users.stateIn(
         viewModelScope,
-        SharingStarted.Companion.WhileSubscribed(),
+        SharingStarted.WhileSubscribed(),
         emptyList()
     )
-
-    fun addUser(name: String, email: String, password: String, address: String, age: Int) {
-        viewModelScope.launch {
-            repository.insert(
-                User(
-                    name = name,
-                    email = email,
-                    password = password,
-                    address = address,
-                    age = age
-                )
-            )
-        }
-    }
-
-
 
     suspend fun addUserReturn(
         name: String,
@@ -49,64 +32,77 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
         password: String,
         address: String,
         age: Int
-    ): User? {
-        return withContext(Dispatchers.IO) {
+    ): User? = withContext(Dispatchers.IO) {
+        try {
+            val newUser = User(
+                name = name,
+                email = email,
+                password = password,
+                address = address,
+                age = age
+            )
+            val id = repository.insert(newUser)
+            if (id > 0L) {
+                repository.getUserById(id.toInt()) ?: repository.getLastUser()
+            } else null
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    suspend fun getUserByEmailAndPassword(email: String, password: String): User? =
+        withContext(Dispatchers.IO) {
             try {
-                val newUser = User(
-                    name = name,
-                    email = email,
-                    password = password,
-                    address = address,
-                    age = age
-                )
-                val id = repository.insert(newUser)
-                android.util.Log.d("UserVM", "insert returned id=$id for user=$newUser")
-                if (id > 0L) {
-                    val byId = repository.getUserById(id.toInt())
-                    android.util.Log.d("UserVM", "getUserById returned $byId")
-                    repository.getUserById(id.toInt()) ?: repository.getLastUser()
-                } else {
-                    android.util.Log.e("UserVM", "insert returned id <= 0")
-                    null
-                }
+                repository.getByEmailAndPassword(email.trim(), password)
             } catch (e: Exception) {
-                android.util.Log.e("UserVM", "addUserReturn exception", e)
                 null
             }
         }
-    }
 
-
-
-    fun deleteUser(user: User) {
-        viewModelScope.launch {
-            repository.delete(user)
+    suspend fun getUserByIdSusp(id: Int): User? = withContext(Dispatchers.IO) {
+        try {
+            repository.getUserById(id)
+        } catch (e: Exception) {
+            null
         }
     }
 
-    fun updateUser(user: User, newName: String, newAge: Int) {
-        viewModelScope.launch {
-            repository.update(user.copy(name=newName,age=newAge))
+    fun updateProfile(user: User, newName: String, newAge: Int, newAddress: String? = null) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val updated = user.copy(
+                name = newName,
+                age = newAge,
+                address = newAddress ?: user.address
+            )
+            repository.update(updated)
         }
     }
+
+    suspend fun changePasswordIfMatches(user: User, currentPassword: String, newPassword: String): Boolean =
+        withContext(Dispatchers.IO) {
+            if (user.password != currentPassword) return@withContext false
+            val updated = user.copy(password = newPassword)
+            repository.update(updated)
+            true
+        }
 
     fun onNameChange(value: String) {
         _state.update { it.copy(name = value, errores = it.errores.copy(name = null)) }
     }
 
-    fun onEmailChange(value: String){
+    fun onEmailChange(value: String) {
         _state.update { it.copy(email = value, errores = it.errores.copy(email = null)) }
     }
 
-    fun onPasswordChange(value: String){
+    fun onPasswordChange(value: String) {
         _state.update { it.copy(password = value, errores = it.errores.copy(password = null)) }
     }
 
-    fun onAddresChange(value: String){
+    fun onAddresChange(value: String) {
         _state.update { it.copy(address = value, errores = it.errores.copy(address = null)) }
     }
 
-    fun onAcceptTermns(value: Boolean){
+    fun onAcceptTermns(value: Boolean) {
         _state.update { it.copy(acceptTerms = value) }
     }
 
@@ -122,18 +118,7 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
         return listOfNotNull(errors.email, errors.password).isEmpty()
     }
 
-    suspend fun getUserByEmailAndPassword(email: String, password: String): User? {
-        return withContext(Dispatchers.IO) {
-            try {
-                repository.getByEmailAndPassword(email.trim(), password)
-            } catch (e: Exception) {
-                null
-            }
-        }
-    }
-
     fun setLoginError(message: String) {
         _state.update { it.copy(errores = it.errores.copy(email = message)) }
     }
-
 }

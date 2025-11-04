@@ -1,9 +1,13 @@
 package com.example.lvlupfinal.model
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.ui.graphics.vector.ImageVector
 
@@ -43,6 +47,36 @@ sealed class Screen(
         route = "moreoptions",
         title = "Más",
         icon = Icons.Filled.Menu
+    )
+
+    object Login: Screen (
+        route = "login",
+        title = "Login",
+        icon = Icons.Filled.AccountCircle
+    )
+
+    object About : Screen(
+        route = "about",
+        title = "Sobre Nosotros",
+        icon = Icons.Filled.Place
+    )
+
+    object Account : Screen(
+        route = "account",
+        title = "Cuenta",
+        icon = Icons.Filled.Person
+    )
+
+    object EditProfile : Screen(
+        route = "editprofile",
+        title = "Editar Perfil",
+        icon = Icons.Filled.Edit
+    )
+
+    object ChangePassword : Screen(
+        route = "changepassword",
+        title = "Cambiar Contraseña",
+        icon = Icons.Filled.Build
     )
 
 
