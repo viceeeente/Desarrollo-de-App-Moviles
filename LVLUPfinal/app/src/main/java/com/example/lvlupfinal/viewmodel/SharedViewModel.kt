@@ -46,7 +46,6 @@ class SharedViewModel : ViewModel() {
     private val _isLoggedIn = MutableStateFlow(false)
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
 
-    // Estado mínimo para el usuario activo
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currentUser.asStateFlow()
 

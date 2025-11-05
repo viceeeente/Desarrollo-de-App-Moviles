@@ -30,47 +30,62 @@ fun AppNavigation(
     val currentScreenRoute by sharedViewModel.currentScreen.collectAsState()
     val isLoggedIn by sharedViewModel.isLoggedIn.collectAsState()
 
-    val allItems = listOf(
-        Screen.Home,
-        Screen.ShoppingCart,
-        Screen.MoreOptions
-    )
+    val loggedOutItems = listOf(Screen.Home, Screen.MoreOptions)
+    val loggedInItems = listOf(Screen.Home, Screen.ShoppingCart, Screen.MoreOptions)
+    val visibleItems = if (isLoggedIn) loggedInItems else loggedOutItems
 
     Scaffold(
         bottomBar = {
-            BottonNavBar(
-                items = allItems,
-                currentScreen = allItems.find { it.route == currentScreenRoute } ?: Screen.Home,
-                onItemSelected = { screen ->
-                    sharedViewModel.onBottonNavSelected(screen.route)
-                }
-            )
+            if (currentScreenRoute != Screen.Login.route && currentScreenRoute != Screen.Register.route) {
+                BottonNavBar(
+                    items = visibleItems,
+                    currentScreen = visibleItems.find { it.route == currentScreenRoute } ?: visibleItems.first(),
+                    onItemSelected = { screen ->
+                        val protected = setOf(Screen.ShoppingCart.route, Screen.Account.route)
+                        if (!isLoggedIn && screen.route in protected) {
+                            sharedViewModel.onBottonNavSelected(Screen.Login.route)
+                        } else {
+                            sharedViewModel.onBottonNavSelected(screen.route)
+                        }
+                    }
+                )
+            }
         }
     ) { contentPadding ->
-        when (currentScreenRoute) {
-            Screen.Home.route -> HomeScreen(
-                modifier = Modifier.padding(contentPadding),
-                viewModel = sharedViewModel
-            )
+        val protectedRoutes = setOf(
+            Screen.ShoppingCart.route, Screen.Account.route,
+            Screen.EditProfile.route, Screen.ChangePassword.route
+        )
+        val effectiveRoute = if (!isLoggedIn && currentScreenRoute in protectedRoutes) {
+            Screen.Login.route
+        } else currentScreenRoute
+
+        when (effectiveRoute) {
+            Screen.Home.route -> HomeScreen(modifier = Modifier.padding(contentPadding), viewModel = sharedViewModel)
+
             Screen.ShoppingCart.route -> ShoppingCart(
                 modifier = Modifier.padding(contentPadding),
                 viewModel = sharedViewModel
-            ) {
-                sharedViewModel.onBottonNavSelected(Screen.Home.route)
-            }
+            ) { sharedViewModel.onBottonNavSelected(Screen.Home.route) }
+
             Screen.MoreOptions.route -> MoreOptions(
                 modifier = Modifier.padding(contentPadding),
                 sharedViewModel = sharedViewModel,
                 userViewModel = userViewModel,
                 onNavigate = { route -> sharedViewModel.onBottonNavSelected(route) }
             )
+
             Screen.Register.route -> Register(
                 modifier = Modifier.padding(contentPadding),
                 sharedViewModel = sharedViewModel,
                 viewModel = userViewModel
             )
-            Screen.About.route -> AboutScreen(
-                modifier = Modifier.padding(contentPadding)
+
+            Screen.Login.route -> LoginScreen(
+                modifier = Modifier.padding(contentPadding),
+                sharedViewModel = sharedViewModel,
+                userViewModel = userViewModel,
+                onNavigate = { route -> sharedViewModel.onBottonNavSelected(route) }
             )
 
             Screen.Account.route -> AccountScreen(
@@ -93,18 +108,9 @@ fun AppNavigation(
                 onDone = { sharedViewModel.onBottonNavSelected(Screen.Account.route) }
             )
 
-            Screen.Login.route -> LoginScreen(
-                modifier = Modifier.padding(contentPadding),
-                sharedViewModel = sharedViewModel,
-                userViewModel = userViewModel,
-                onNavigate = { route -> sharedViewModel.onBottonNavSelected(route) }
-            )
+            Screen.About.route -> AboutScreen(modifier = Modifier.padding(contentPadding))
 
-
-            else -> HomeScreen(
-                modifier = Modifier.padding(contentPadding),
-                viewModel = sharedViewModel
-            )
+            else -> HomeScreen(modifier = Modifier.padding(contentPadding), viewModel = sharedViewModel)
         }
     }
 }
