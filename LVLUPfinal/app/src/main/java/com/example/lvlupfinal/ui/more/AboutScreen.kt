@@ -26,7 +26,12 @@ fun AboutScreen(
         )
 
         Text(
-            text = "Aquí puedes escribir una descripción sobre tu aplicación, el equipo, la misión o cualquier otro detalle que quieras compartir.",
+            text = "Misión: Proporcionar productos de alta calidad para gamers en todo Chile",
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(top = 16.dp)
+        )
+        Text(
+            text = "Visión: Ser la tienda online líder en productos para gamers, ofreciendo una experiencia única",
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(top = 16.dp)
         )

@@ -63,9 +63,10 @@ class SharedViewModel : ViewModel() {
         _isLoggedIn.value = value
     }
 
-    fun setCurrentUser(user: User?) { _currentUser.value = user }
+    fun setCurrentUser(user: User?) {
+        android.util.Log.d("SharedVM","setCurrentUser llamado con: $user")
+        _currentUser.value = user }
 
-    // Helper para escenarios donde desde la UI querés setear el user id en background
     fun setCurrentUserFromRepo(load: suspend () -> User?) {
         viewModelScope.launch {
             val user = load()

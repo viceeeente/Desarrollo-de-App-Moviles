@@ -19,6 +19,7 @@ import com.example.lvlupfinal.ui.users.Register
 import com.example.lvlupfinal.ui.more.account.AccountScreen
 import com.example.lvlupfinal.ui.more.account.ChangePasswordScreen
 import com.example.lvlupfinal.ui.more.account.EditProfileScreen
+import com.example.lvlupfinal.ui.users.LoginScreen
 
 @Composable
 fun AppNavigation(
@@ -91,6 +92,14 @@ fun AppNavigation(
                 userViewModel = userViewModel,
                 onDone = { sharedViewModel.onBottonNavSelected(Screen.Account.route) }
             )
+
+            Screen.Login.route -> LoginScreen(
+                modifier = Modifier.padding(contentPadding),
+                sharedViewModel = sharedViewModel,
+                userViewModel = userViewModel,
+                onNavigate = { route -> sharedViewModel.onBottonNavSelected(route) }
+            )
+
 
             else -> HomeScreen(
                 modifier = Modifier.padding(contentPadding),

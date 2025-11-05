@@ -8,7 +8,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.lvlupfinal.data.local.User
 import com.example.lvlupfinal.model.Screen
 import com.example.lvlupfinal.viewmodel.SharedViewModel
@@ -21,7 +20,7 @@ import kotlinx.coroutines.withContext
 fun Register(
     modifier: Modifier = Modifier,
     sharedViewModel: SharedViewModel,
-    viewModel: UserViewModel = viewModel()
+    viewModel: UserViewModel
 ) {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -150,6 +149,7 @@ fun Register(
                             if (created != null) {
                                 sharedViewModel.setCurrentUser(created)
                                 sharedViewModel.onBottonNavSelected(Screen.Home.route)
+                                sharedViewModel.setLoggedIn(true)
                             } else {
                                 errorMessage = "Error al crear o encontrar el usuario"
                             }

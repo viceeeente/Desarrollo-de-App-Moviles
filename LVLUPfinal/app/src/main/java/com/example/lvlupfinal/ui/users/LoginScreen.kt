@@ -34,7 +34,7 @@ import kotlinx.coroutines.withContext
 fun LoginScreen(
     modifier: Modifier = Modifier,
     sharedViewModel: SharedViewModel,
-    userViewModel: UserViewModel = viewModel(),
+    userViewModel: UserViewModel,
     onNavigate: (String) -> Unit
 ) {
     val currentUser = sharedViewModel.currentUser.collectAsState().value
@@ -55,12 +55,11 @@ fun LoginScreen(
         )
 
         if (currentUser != null) {
-            Text("Sesión iniciada como ${currentUser.name}", modifier = Modifier.align(Alignment.CenterHorizontally))
+            Text("Sesión iniciada como ${currentUser.name}" , modifier = Modifier.align(Alignment.CenterHorizontally))
             Button(
                 onClick = {
                     sharedViewModel.setCurrentUser(null)
                     sharedViewModel.setLoggedIn(false)
-                    // usar el router central en lugar de onNavigate
                     sharedViewModel.onBottonNavSelected(Screen.Home.route)
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -113,16 +112,21 @@ fun LoginScreen(
 
                 isSubmitting = true
                 scope.launch {
+                    val email = uiState.email.trim()
+                    val password = uiState.password
+
+                    android.util.Log.d("LoginDebug", "Intentando login con: $email / $password")
+
                     val user = try {
                         withContext(Dispatchers.IO) {
-                            userViewModel.getUserByEmailAndPassword(
-                                uiState.email.trim(),
-                                uiState.password
-                            )
+                            userViewModel.getUserByEmailAndPassword(email, password)
                         }
                     } catch (e: Exception) {
+                        android.util.Log.e("LoginDebug", "Error al consultar DB", e)
                         null
                     }
+
+                    android.util.Log.d("LoginDebug", "Resultado de login: $user")
 
                     if (user != null) {
                         sharedViewModel.setCurrentUser(user)

@@ -70,7 +70,6 @@ fun MoreOptions(
             Text(if (currentUser != null) "Cerrar sesión" else "Iniciar sesión")
         }
 
-        // línea mínima añadida: enlace a registro cuando no hay sesión
         if (currentUser == null) {
             Spacer(Modifier.height(8.dp))
             TextButton(onClick = { onNavigate(Screen.Register.route) }) {
