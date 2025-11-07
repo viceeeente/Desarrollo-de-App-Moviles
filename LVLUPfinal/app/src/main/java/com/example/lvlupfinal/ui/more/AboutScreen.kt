@@ -14,10 +14,12 @@ import androidx.compose.ui.unit.dp
 fun AboutScreen(
     modifier: Modifier = Modifier
 ) {
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(24.dp),
+
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(

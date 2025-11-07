@@ -2,13 +2,16 @@ package com.example.lvlupfinal.ui.users
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -145,6 +148,13 @@ fun LoginScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(if (isSubmitting) "Ingresando..." else "Entrar")
+        }
+        if(currentUser == null) {
+            Spacer(Modifier.height(8.dp))
+            TextButton(
+                onClick = { onNavigate(Screen.Register.route)}) {
+                Text("Si no tienes una cuenta, registrate aquí")
+            }
         }
     }
 }
