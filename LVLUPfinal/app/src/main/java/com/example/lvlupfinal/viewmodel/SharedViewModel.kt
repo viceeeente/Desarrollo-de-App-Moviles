@@ -1,7 +1,9 @@
 package com.example.lvlupfinal.viewmodel
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.lvlupfinal.data.local.User
+import com.example.lvlupfinal.products.Product
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -76,6 +78,15 @@ class SharedViewModel : ViewModel() {
 
     fun setSelectedItem(id:String) {
         _selectedItemId.value = id
+    }
+
+    private val _carrito = mutableStateListOf<Product>()
+    val carrito: List<Product> get() = _carrito
+
+    fun agregarAlCarrito(producto: Product) {
+        if (isLoggedIn.value) {
+            _carrito.add(producto)
+        }
     }
 
 

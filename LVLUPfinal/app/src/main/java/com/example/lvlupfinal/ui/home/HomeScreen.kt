@@ -7,40 +7,52 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.lvlupfinal.viewmodel.SharedViewModel
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.maps.android.compose.*
+import com.google.android.gms.maps.model.LatLng
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: SharedViewModel = viewModel()
 ) {
-    val currentUser by viewModel.currentUser.collectAsState()
-    val categories = listOf("Consolas", "Juegos", "Mouse", "Mousepad", "PC", "Poleras", "Silla Gamer")
+    val categorias = listOf("Consolas", "Juegos", "Mouse", "Mousepad", "PC", "Poleras", "Silla Gamer")
+    val melipilla = LatLng(-33.6745, -71.2154)
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(melipilla, 14f)
+    }
 
-    Column(modifier = modifier.padding(16.dp)) {
+    Column(modifier = modifier.fillMaxSize()) {
         Text(
-            text = if (currentUser != null) "Hola, ${currentUser?.name}" else "Bienvenido a LvlUpGamer",
-            style = MaterialTheme.typography.headlineLarge
+            text = "Bienvenido a LevelUp",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(16.dp)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        CategoryCarousel(categories = categorias) { selected ->
+            viewModel.onBottonNavSelected(selected.lowercase())
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Categorías",
-            style = MaterialTheme.typography.titleMedium
+            text = "Nuestra ubicación",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
 
-        CategoryCarousel(categories = categories) { selectedCategory ->
-            val route = when (selectedCategory.lowercase()) {
-                "consolas" -> "consolas"
-                "juegos" -> "juegos"
-                "mouse" -> "mouse"
-                "mousepad" -> "mousepad"
-                "pc" -> "pc"
-                "poleras" -> "poleras"
-                "silla gamer" -> "silla"
-                else -> "home"
-            }
-            viewModel.onBottonNavSelected(route)
+        GoogleMap(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp)
+                .padding(16.dp),
+            cameraPositionState = cameraPositionState
+        ) {
+            Marker(
+                state = MarkerState(position = melipilla),
+                title = "Melipilla",
+                snippet = "Aquí estamos"
+            )
         }
     }
 }

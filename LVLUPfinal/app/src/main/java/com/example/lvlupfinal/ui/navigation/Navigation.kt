@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.lvlupfinal.model.Screen
+import com.example.lvlupfinal.ui.carrito.CarritoScreen
 import com.example.lvlupfinal.ui.categories.*
 import com.example.lvlupfinal.ui.common.BottonNavBar
 import com.example.lvlupfinal.ui.home.HomeScreen
@@ -16,7 +17,7 @@ import com.example.lvlupfinal.ui.more.MoreOptions
 import com.example.lvlupfinal.ui.more.account.AccountScreen
 import com.example.lvlupfinal.ui.more.account.ChangePasswordScreen
 import com.example.lvlupfinal.ui.more.account.EditProfileScreen
-import com.example.lvlupfinal.ui.shoppingcart.ShoppingCart
+import com.example.lvlupfinal.ui.categories.PoleraScreen
 import com.example.lvlupfinal.ui.users.LoginScreen
 import com.example.lvlupfinal.ui.users.Register
 import com.example.lvlupfinal.viewmodel.SharedViewModel
@@ -67,12 +68,11 @@ fun AppNavigation(
                 viewModel = sharedViewModel
             )
 
-            Screen.ShoppingCart.route -> ShoppingCart(
+            Screen.ShoppingCart.route -> CarritoScreen(
                 modifier = Modifier.padding(contentPadding),
-                viewModel = sharedViewModel
-            ) {
-                sharedViewModel.onBottonNavSelected(Screen.Home.route)
-            }
+                viewModel = sharedViewModel,
+                onBackToHome = { sharedViewModel.onBottonNavSelected(Screen.Home.route) }
+            )
 
             Screen.MoreOptions.route -> MoreOptions(
                 modifier = Modifier.padding(contentPadding),
@@ -123,7 +123,7 @@ fun AppNavigation(
             "mouse" -> MouseScreen(modifier = Modifier.padding(contentPadding))
             "mousepad" -> MousepadScreen(modifier = Modifier.padding(contentPadding))
             "pc" -> PCScreen(modifier = Modifier.padding(contentPadding))
-            "poleras" -> PolerasScreen(modifier = Modifier.padding(contentPadding))
+            "poleras" -> PoleraScreen(modifier = Modifier.padding(contentPadding))
             "silla" -> SillaGamerScreen(modifier = Modifier.padding(contentPadding))
 
             else -> HomeScreen(

@@ -10,26 +10,35 @@ import androidx.compose.ui.unit.sp
 import com.example.lvlupfinal.products.Product
 
 @Composable
-fun ProductCard(producto: Product) {
+fun ProductCard(
+    producto: Product,
+    onAddToCart: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Row(modifier = Modifier.padding(16.dp)) {
-            Icon(
-                painter = painterResource(id = producto.img),
-                contentDescription = producto.name,
-                modifier = Modifier.size(64.dp)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column {
-                Text(producto.name, style = MaterialTheme.typography.titleMedium)
-                Text("Precio: \$${producto.price}", fontSize = 14.sp)
-                if (producto.description.isNotBlank()) {
-                    Text(producto.description, fontSize = 12.sp)
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row {
+                Icon(
+                    painter = painterResource(id = producto.img),
+                    contentDescription = producto.name,
+                    modifier = Modifier.size(64.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Column {
+                    Text(producto.name, style = MaterialTheme.typography.titleMedium)
+                    Text("Precio: \$${producto.price}", fontSize = 14.sp)
+                    if (producto.description.isNotBlank()) {
+                        Text(producto.description, fontSize = 12.sp)
+                    }
                 }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(onClick = onAddToCart) {
+                Text("Agregar al carrito")
             }
         }
     }

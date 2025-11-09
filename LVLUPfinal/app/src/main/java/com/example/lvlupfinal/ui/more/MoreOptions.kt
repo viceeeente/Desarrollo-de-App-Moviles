@@ -28,12 +28,13 @@ fun MoreOptions(
 ) {
     val isLoggedIn by sharedViewModel.isLoggedIn.collectAsState()
     Column(modifier = modifier.padding(16.dp)) {
-        Text(text = "Sobre nosotros", style = MaterialTheme.typography.titleMedium, modifier = Modifier.clickable {
-            onNavigate(Screen.About.route)
-        })
+        Spacer(modifier = Modifier.height(150.dp))
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Button(onClick = { onNavigate(Screen.About.route) }, modifier = Modifier.fillMaxWidth()) {
+            Text("Sobre Nosotros")
+        }
 
+        Spacer(modifier = Modifier.height(24.dp))
         if (!isLoggedIn) {
             Button(onClick = { onNavigate(Screen.Login.route) }, modifier = Modifier.fillMaxWidth()) {
                 Text("Iniciar sesión")
