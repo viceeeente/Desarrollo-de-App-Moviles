@@ -1,0 +1,15 @@
+INSERT INTO products (name, description, price, stock) VALUES
+('PlayStation 5', 'Consola de última generación de Sony...', 499990, 10),
+('Xbox Series X', 'La consola más potente de Microsoft...', 449990, 8),
+('Catan', 'Juego de mesa clásico', 29900, 20),
+('Carcassonne', 'Juego de mesa estratégico', 24990, 15),
+('Mouse Logitech G502 HERO', 'Sensor HERO 25K, 11 botones...', 49990, 30),
+('Mouse Razer DeathAdder V2', 'Sensor óptico 8500 dpi, ergonómico...', 29990, 25),
+('Mousepad Razer Goliathus', 'Iluminación RGB, superficie optimizada...', 29990, 40),
+('Mousepad Corsair MM300', 'Tela resistente, bordes cosidos...', 19990, 35),
+('PC Gamer Ryzen 7 RTX 4060', 'Gaming 2K, multitareas exigentes...', 899990, 5),
+('Notebook ASUS TUF Gaming', 'Pantalla 144Hz, Ryzen 5, GTX 1650...', 749990, 7),
+('Polera Level Up', 'Polera gamer', 14990, 50),
+('Polera Game On', 'Polera gamer', 14990, 50),
+('Silla Secretlab TITAN', 'Comodidad, soporte lumbar, 4D...', 349990, 12),
+('Silla DXRacer Formula', 'Silla gamer clásica', 399990, 10);
