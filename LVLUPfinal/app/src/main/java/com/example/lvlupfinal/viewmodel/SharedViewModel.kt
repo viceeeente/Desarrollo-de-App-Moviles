@@ -2,8 +2,8 @@ package com.example.lvlupfinal.viewmodel
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.lvlupfinal.data.local.User
-import com.example.lvlupfinal.products.Product
+import com.example.lvlupfinal.data.users.User
+import com.example.lvlupfinal.data.products.Product
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

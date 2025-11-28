@@ -6,8 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
-import com.example.lvlupfinal.data.local.AppDatabase
-import com.example.lvlupfinal.data.repository.UserRepository
+import com.example.lvlupfinal.data.users.AppDatabase
+import com.example.lvlupfinal.data.users.UserRepository
 import com.example.lvlupfinal.ui.navigation.AppNavigation
 import com.example.lvlupfinal.viewmodel.SharedViewModel
 import com.example.lvlupfinal.viewmodel.UserViewModel

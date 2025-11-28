@@ -1,10 +1,11 @@
-package com.example.lvlupfinal.products
+package com.example.lvlupfinal.data.products
 
 data class Product (
-    val id: String,
+    val id: Int?,
     val name: String,
     val category: String,
     val price: Int,
     val description: String,
-    val img: Int
+    val img: Int,
+    val stock :Int
 )

@@ -7,7 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.lvlupfinal.products.ProductRepository
+import com.example.lvlupfinal.data.products.ProductRepository
 import com.example.lvlupfinal.ui.products.ProductCard
 import androidx.compose.runtime.LaunchedEffect
 import com.example.lvlupfinal.viewmodel.SharedViewModel

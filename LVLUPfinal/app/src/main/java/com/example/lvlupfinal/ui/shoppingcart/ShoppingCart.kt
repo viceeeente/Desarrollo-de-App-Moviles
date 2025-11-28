@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.lvlupfinal.viewmodel.SharedViewModel
-import com.example.lvlupfinal.products.Product
+import com.example.lvlupfinal.data.products.Product
 
 @Composable
 fun CarritoScreen(

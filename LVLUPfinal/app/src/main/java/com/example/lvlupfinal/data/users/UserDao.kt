@@ -1,4 +1,4 @@
-package com.example.lvlupfinal.data.local
+package com.example.lvlupfinal.data.users
 
 import androidx.room.Dao
 import androidx.room.Delete

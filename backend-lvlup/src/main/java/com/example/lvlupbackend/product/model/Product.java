@@ -1,5 +1,6 @@
 package com.example.lvlupbackend.product.model;
 
+import com.example.lvlupbackend.categories.model.Category;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,9 +14,12 @@ public class Product {
     private Integer id;
 
     private String name;
-    private String category;
     private String description;
     private Integer price;
     private Integer stock;
-    private Integer img;
+    private String img;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 }
