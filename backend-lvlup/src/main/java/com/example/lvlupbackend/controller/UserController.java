@@ -1,7 +1,7 @@
-package com.example.lvlupbackend.user.controller;
+package com.example.lvlupbackend.controller;
 
-import com.example.lvlupbackend.user.model.User;
-import com.example.lvlupbackend.user.service.UserService;
+import com.example.lvlupbackend.model.User;
+import com.example.lvlupbackend.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

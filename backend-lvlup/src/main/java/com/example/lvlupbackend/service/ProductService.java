@@ -1,7 +1,7 @@
-package com.example.lvlupbackend.product.service;
+package com.example.lvlupbackend.service;
 
-import com.example.lvlupbackend.product.model.Product;
-import com.example.lvlupbackend.product.repository.ProductRepository;
+import com.example.lvlupbackend.model.Product;
+import com.example.lvlupbackend.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

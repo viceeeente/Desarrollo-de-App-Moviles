@@ -99,7 +99,6 @@ fun AppNavigation(
             Screen.Account.route -> AccountScreen(
                 modifier = Modifier.padding(contentPadding),
                 sharedViewModel = sharedViewModel,
-                userViewModel = userViewModel,
                 onEdit = { sharedViewModel.onBottonNavSelected(Screen.EditProfile.route) }
             )
 

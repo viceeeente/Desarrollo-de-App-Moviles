@@ -1,6 +1,5 @@
-package com.example.lvlupbackend.product.model;
+package com.example.lvlupbackend.model;
 
-import com.example.lvlupbackend.categories.model.Category;
 import jakarta.persistence.*;
 import lombok.Data;
 

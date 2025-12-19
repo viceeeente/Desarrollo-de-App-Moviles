@@ -1,7 +1,7 @@
-package com.example.lvlupbackend.product.controller;
+package com.example.lvlupbackend.controller;
 
-import com.example.lvlupbackend.product.model.Product;
-import com.example.lvlupbackend.product.service.ProductService;
+import com.example.lvlupbackend.model.Product;
+import com.example.lvlupbackend.service.ProductService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

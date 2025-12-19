@@ -1,4 +1,4 @@
-package com.example.lvlupbackend.categories.model;
+package com.example.lvlupbackend.model;
 
 import jakarta.persistence.*;
 import lombok.Data;

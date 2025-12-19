@@ -23,6 +23,10 @@ fun JuegosScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     var mensajePendiente by remember { mutableStateOf<String?>(null) }
 
+    LaunchedEffect(Unit) {
+        viewModel.loadProducts()
+    }
+
     LaunchedEffect(mensajePendiente) {
         mensajePendiente?.let {
             snackbarHostState.showSnackbar(it)
@@ -32,16 +36,24 @@ fun JuegosScreen(
 
     Box(modifier = modifier.fillMaxSize()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Juegos", style = MaterialTheme.typography.headlineMedium)
+            Text(text = "Juegos", style = MaterialTheme.typography.headlineMedium)
             Spacer(modifier = Modifier.height(16.dp))
 
-            productosJuegos.forEach { producto ->
-                ProductCard(producto) {
-                    if (isLoggedIn) {
-                        viewModel.agregarAlCarrito(producto)
-                        mensajePendiente = "Producto agregado al carrito"
-                    } else {
-                        mensajePendiente = "Debes iniciar sesión para agregar al carrito"
+            if (productosJuegos.isEmpty()) {
+                Text("No hay productos disponibles")
+            } else {
+                productosJuegos.forEach { producto ->
+                    ProductCard(
+                        producto.copy(
+                            img = "http://10.0.2.2:8080${producto.img}"
+                        )
+                    ) {
+                        if (isLoggedIn) {
+                            viewModel.agregarAlCarrito(producto)
+                            mensajePendiente = "Producto agregado al carrito"
+                        } else {
+                            mensajePendiente = "Debes iniciar sesión para agregar al carrito"
+                        }
                     }
                 }
             }

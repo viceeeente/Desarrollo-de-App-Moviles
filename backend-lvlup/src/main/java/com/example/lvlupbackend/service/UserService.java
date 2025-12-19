@@ -1,7 +1,7 @@
-package com.example.lvlupbackend.user.service;
+package com.example.lvlupbackend.service;
 
-import com.example.lvlupbackend.user.model.User;
-import com.example.lvlupbackend.user.repository.UserRepository;
+import com.example.lvlupbackend.model.User;
+import com.example.lvlupbackend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

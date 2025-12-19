@@ -8,9 +8,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.livedata.observeAsState
-import com.example.lvlupfinal.data.products.ProductCard
 import com.example.lvlupfinal.viewmodel.SharedViewModel
 import com.example.lvlupfinal.data.products.Product
+import com.example.lvlupfinal.data.products.ProductCard
 
 @Composable
 fun ConsolasScreen(
@@ -43,7 +43,11 @@ fun ConsolasScreen(
                 Text("No hay productos disponibles")
             } else {
                 productosConsola.forEach { producto ->
-                    ProductCard(producto) {
+                    ProductCard(
+                        producto.copy(
+                            img = "http://10.0.2.2:8080${producto.img}"
+                        )
+                    ) {
                         if (isLoggedIn) {
                             viewModel.agregarAlCarrito(producto)
                             mensajePendiente = "Producto agregado al carrito"
