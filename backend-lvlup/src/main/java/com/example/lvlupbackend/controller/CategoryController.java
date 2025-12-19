@@ -1,7 +1,7 @@
 package com.example.lvlupbackend.controller;
 
 import com.example.lvlupbackend.model.Category;
-import com.example.lvlupbackend.categories.repository.CategoryRepository;
+import com.example.lvlupbackend.repository.CategoryRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

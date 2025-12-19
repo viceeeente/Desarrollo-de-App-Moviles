@@ -1,7 +1,7 @@
 package com.example.lvlupbackend.service;
 
 import com.example.lvlupbackend.model.Category;
-import com.example.lvlupbackend.categories.repository.CategoryRepository;
+import com.example.lvlupbackend.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

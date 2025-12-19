@@ -1,4 +1,4 @@
-package com.example.lvlupbackend.categories.repository;
+package com.example.lvlupbackend.repository;
 
 import com.example.lvlupbackend.model.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
