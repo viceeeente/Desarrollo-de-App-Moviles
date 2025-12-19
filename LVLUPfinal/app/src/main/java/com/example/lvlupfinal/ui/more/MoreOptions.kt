@@ -44,11 +44,15 @@ fun MoreOptions(
                 Text("Mi cuenta")
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = {
-                sharedViewModel.setCurrentUser(null)
-                sharedViewModel.setLoggedIn(false)
-                sharedViewModel.onBottonNavSelected(Screen.Home.route)
-            }, modifier = Modifier.fillMaxWidth()) {
+            Button(
+                onClick = {
+                    // ✅ Usamos la función existente en SharedViewModel
+                    sharedViewModel.setLoginState(false)
+                    // ✅ Navegamos a Home directamente
+                    onNavigate(Screen.Home.route)
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Text("Cerrar sesión")
             }
         }

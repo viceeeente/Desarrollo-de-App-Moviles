@@ -8,7 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.lvlupfinal.model.Screen
-import com.example.lvlupfinal.ui.carrito.CarritoScreen
+import com.example.lvlupfinal.ui.shoppingcart.CarritoScreen
 import com.example.lvlupfinal.ui.categories.*
 import com.example.lvlupfinal.ui.common.BottonNavBar
 import com.example.lvlupfinal.ui.home.HomeScreen
@@ -27,7 +27,7 @@ import com.example.lvlupfinal.viewmodel.UserViewModel
 fun AppNavigation(
     navController: NavController,
     sharedViewModel: SharedViewModel,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel   // ✅ ahora sí
 ) {
     val currentScreenRoute by sharedViewModel.currentScreen.collectAsState()
     val isLoggedIn by sharedViewModel.isLoggedIn.collectAsState()
@@ -54,6 +54,8 @@ fun AppNavigation(
             }
         }
     ) { contentPadding ->
+
+        // ✅ Definimos effectiveRoute antes del when
         val protectedRoutes = setOf(
             Screen.ShoppingCart.route, Screen.Account.route,
             Screen.EditProfile.route, Screen.ChangePassword.route
@@ -97,6 +99,7 @@ fun AppNavigation(
             Screen.Account.route -> AccountScreen(
                 modifier = Modifier.padding(contentPadding),
                 sharedViewModel = sharedViewModel,
+                userViewModel = userViewModel,
                 onEdit = { sharedViewModel.onBottonNavSelected(Screen.EditProfile.route) }
             )
 

@@ -42,7 +42,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -52,6 +51,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.foundation)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -84,5 +84,14 @@ dependencies {
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhtpp3:logging-interceptor:4.9.3")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3") // ✅ corregido
+
+    // ✅ Necesario para usar observeAsState con LiveData en Compose
+    implementation("androidx.compose.runtime:runtime-livedata:1.7.5")
+
+    // Opcional: si quieres seguir usando extensiones de LiveData como map/switchMap
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
+
+    // ✅ Coil para cargar imágenes desde URL en Compose
+    implementation("io.coil-kt:coil-compose:2.4.0")
 }

@@ -8,6 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.lvlupfinal.data.users.User
 import com.example.lvlupfinal.model.Screen
 import com.example.lvlupfinal.viewmodel.SharedViewModel
@@ -20,7 +21,7 @@ import kotlinx.coroutines.withContext
 fun Register(
     modifier: Modifier = Modifier,
     sharedViewModel: SharedViewModel,
-    viewModel: UserViewModel
+    viewModel: UserViewModel = viewModel() // ✅ valor por defecto
 ) {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -107,30 +108,12 @@ fun Register(
                     val age = ageText.toIntOrNull() ?: 0
 
                     when {
-                        name.isBlank() -> {
-                            errorMessage = "El nombre no puede estar vacío"
-                            return@Button
-                        }
-                        email.isBlank() || !email.contains("@") -> {
-                            errorMessage = "Ingrese un email válido"
-                            return@Button
-                        }
-                        password.length < 6 -> {
-                            errorMessage = "La contraseña debe tener al menos 6 caracteres"
-                            return@Button
-                        }
-                        address.isBlank() -> {
-                            errorMessage = "La dirección no puede estar vacía"
-                            return@Button
-                        }
-                        age <= 0 -> {
-                            errorMessage = "Ingresa una edad válida"
-                            return@Button
-                        }
-                        age < 18 -> {
-                            errorMessage = "Debes ser mayor o igual a 18 años"
-                            return@Button
-                        }
+                        name.isBlank() -> { errorMessage = "El nombre no puede estar vacío"; return@Button }
+                        email.isBlank() || !email.contains("@") -> { errorMessage = "Ingrese un email válido"; return@Button }
+                        password.length < 6 -> { errorMessage = "La contraseña debe tener al menos 6 caracteres"; return@Button }
+                        address.isBlank() -> { errorMessage = "La dirección no puede estar vacía"; return@Button }
+                        age <= 0 -> { errorMessage = "Ingresa una edad válida"; return@Button }
+                        age < 18 -> { errorMessage = "Debes ser mayor o igual a 18 años"; return@Button }
                     }
 
                     isSubmitting = true
@@ -149,7 +132,7 @@ fun Register(
                             if (created != null) {
                                 sharedViewModel.setCurrentUser(created)
                                 sharedViewModel.onBottonNavSelected(Screen.Home.route)
-                                sharedViewModel.setLoggedIn(true)
+                                sharedViewModel.setLoginState(true) // ✅ corregido
                             } else {
                                 errorMessage = "Error al crear o encontrar el usuario"
                             }

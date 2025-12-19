@@ -1,13 +1,14 @@
-package com.example.lvlupfinal.ui.products
+package com.example.lvlupfinal.data.products
+import coil.compose.AsyncImage
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.lvlupfinal.data.products.Product
+import androidx.compose.foundation.layout.*          // Column, Row, Spacer, Modifier.size, Modifier.padding, etc.
+import androidx.compose.material3.*                // Card, CardDefaults, Text, Button, MaterialTheme
+import androidx.compose.runtime.Composable         // @Composable annotation
+import androidx.compose.ui.Modifier                // Modifier
+import androidx.compose.ui.unit.dp                 // dp for spacing
+import androidx.compose.ui.unit.sp                 // sp for font size
+import coil.compose.AsyncImage                     // ✅ para cargar imágenes desde URL
+import com.example.lvlupfinal.data.products.Product // tu modelo Product
 
 @Composable
 fun ProductCard(
@@ -22,8 +23,8 @@ fun ProductCard(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row {
-                Icon(
-                    painter = painterResource(id = producto.img),
+                AsyncImage(
+                    model = producto.img,              // ✅ ahora String (URL)
                     contentDescription = producto.name,
                     modifier = Modifier.size(64.dp)
                 )

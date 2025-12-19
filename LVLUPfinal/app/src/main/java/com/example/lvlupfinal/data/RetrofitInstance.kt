@@ -6,21 +6,21 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitInstance {
-    private const val BASE_URL = "http://13.221.126.215/"
 
-    val productApi: ProductApi by lazy {
+    private const val BASE_URL = "http://52.5.117.38/"
+
+    private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(ProductApi::class.java)
+    }
+
+    val productApi: ProductApi by lazy {
+        retrofit.create(ProductApi::class.java)
     }
 
     val userApi: UserApi by lazy {
-        Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(UserApi::class.java)
+        retrofit.create(UserApi::class.java)
     }
 }

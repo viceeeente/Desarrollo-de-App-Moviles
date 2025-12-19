@@ -7,20 +7,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.lvlupfinal.data.products.ProductRepository
-import com.example.lvlupfinal.ui.products.ProductCard
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
+import com.example.lvlupfinal.data.products.ProductCard
 import com.example.lvlupfinal.viewmodel.SharedViewModel
+import com.example.lvlupfinal.data.products.Product
 
 @Composable
 fun ConsolasScreen(
     modifier: Modifier = Modifier,
     viewModel: SharedViewModel = viewModel()
 ) {
-    val productos = remember { ProductRepository().getByCategory("Consola") }
+    val productosConsola by viewModel.productosConsola.observeAsState(initial = emptyList<Product>())
     val isLoggedIn by viewModel.isLoggedIn.collectAsState()
+
     val snackbarHostState = remember { SnackbarHostState() }
     var mensajePendiente by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(Unit) {
+        viewModel.loadProducts()
+    }
 
     LaunchedEffect(mensajePendiente) {
         mensajePendiente?.let {
@@ -31,16 +36,20 @@ fun ConsolasScreen(
 
     Box(modifier = modifier.fillMaxSize()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Consolas", style = MaterialTheme.typography.headlineMedium)
+            Text(text = "Consolas", style = MaterialTheme.typography.headlineMedium)
             Spacer(modifier = Modifier.height(16.dp))
 
-            productos.forEach { producto ->
-                ProductCard(producto) {
-                    if (isLoggedIn) {
-                        viewModel.agregarAlCarrito(producto)
-                        mensajePendiente = "Producto agregado al carrito"
-                    } else {
-                        mensajePendiente = "Debes iniciar sesión para agregar al carrito"
+            if (productosConsola.isEmpty()) {
+                Text("No hay productos disponibles")
+            } else {
+                productosConsola.forEach { producto ->
+                    ProductCard(producto) {
+                        if (isLoggedIn) {
+                            viewModel.agregarAlCarrito(producto)
+                            mensajePendiente = "Producto agregado al carrito"
+                        } else {
+                            mensajePendiente = "Debes iniciar sesión para agregar al carrito"
+                        }
                     }
                 }
             }

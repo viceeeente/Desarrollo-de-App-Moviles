@@ -1,3 +1,5 @@
+package com.example.lvlupfinal.viewmodel
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.lvlupfinal.data.users.User
@@ -9,7 +11,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class UserViewModel(private val repository: UserRepository) : ViewModel() {
+class UserViewModel(
+    private val repository: UserRepository   // ✅ ahora se inyecta desde el Factory
+) : ViewModel() {
 
     private val _state = MutableStateFlow(UserUiState())
     val state: StateFlow<UserUiState> = _state
@@ -39,10 +43,34 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
                     age = age
                 )
                 repository.createUser(newUser)
-                loadUsers() // refresca lista
+                loadUsers()
             } catch (e: Exception) {
                 // Manejo de error
             }
+        }
+    }
+
+    // ✅ Nueva función suspend que devuelve el usuario creado
+    suspend fun addUserReturn(
+        name: String,
+        email: String,
+        password: String,
+        address: String,
+        age: Int
+    ): User? {
+        return try {
+            val newUser = User(
+                name = name,
+                email = email,
+                password = password,
+                address = address,
+                age = age
+            )
+            repository.createUser(newUser)
+            val allUsers = repository.getUsers()
+            allUsers.find { it.email == email }
+        } catch (e: Exception) {
+            null
         }
     }
 
@@ -57,7 +85,7 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
         }
     }
 
-    // Mantén tus funciones de validación de UIState (onNameChange, onEmailChange, etc.)
+    // --- Validaciones de UI ---
     fun onNameChange(value: String) {
         _state.update { it.copy(name = value, errores = it.errores.copy(name = null)) }
     }
@@ -70,11 +98,11 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
         _state.update { it.copy(password = value, errores = it.errores.copy(password = null)) }
     }
 
-    fun onAddresChange(value: String) {
+    fun onAddressChange(value: String) {
         _state.update { it.copy(address = value, errores = it.errores.copy(address = null)) }
     }
 
-    fun onAcceptTermns(value: Boolean) {
+    fun onAcceptTerms(value: Boolean) {
         _state.update { it.copy(acceptTerms = value) }
     }
 
@@ -92,5 +120,44 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
 
     fun setLoginError(message: String) {
         _state.update { it.copy(errores = it.errores.copy(email = message)) }
+    }
+
+    // --- Funciones extra para ChangePasswordScreen ---
+    suspend fun changePasswordIfMatches(user: User, currentPassword: String, newPassword: String): Boolean {
+        return try {
+            if (user.password == currentPassword) {
+                repository.updatePassword(user.id!!, newPassword)
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    suspend fun getUserByIdSusp(id: Int?): User? {
+        return try {
+            if (id == null) return null
+            repository.getUserById(id)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    suspend fun updateProfile(user: User, newName: String, newAge: Int, newAddress: String): User? {
+        return try {
+            repository.updateUserProfile(user.id!!, newName, newAge, newAddress)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    suspend fun getUserByEmailAndPassword(email: String, password: String): User? {
+        return try {
+            val users = repository.getUsers()
+            users.find { it.email == email && it.password == password }
+        } catch (e: Exception) {
+            null
+        }
     }
 }

@@ -23,7 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.lvlupfinal.model.Screen
 import com.example.lvlupfinal.model.UserErrors
 import com.example.lvlupfinal.model.UserUiState
@@ -58,11 +57,14 @@ fun LoginScreen(
         )
 
         if (currentUser != null) {
-            Text("Sesión iniciada como ${currentUser.name}" , modifier = Modifier.align(Alignment.CenterHorizontally))
+            Text(
+                "Sesión iniciada como ${currentUser.name}",
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
             Button(
                 onClick = {
                     sharedViewModel.setCurrentUser(null)
-                    sharedViewModel.setLoggedIn(false)
+                    sharedViewModel.setLoginState(false)
                     sharedViewModel.onBottonNavSelected(Screen.Home.route)
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -133,7 +135,7 @@ fun LoginScreen(
 
                     if (user != null) {
                         sharedViewModel.setCurrentUser(user)
-                        sharedViewModel.setLoggedIn(true)
+                        sharedViewModel.setLoginState(true)
                         sharedViewModel.onBottonNavSelected(Screen.Home.route)
                     } else {
                         uiState = uiState.copy(
@@ -149,10 +151,12 @@ fun LoginScreen(
         ) {
             Text(if (isSubmitting) "Ingresando..." else "Entrar")
         }
-        if(currentUser == null) {
+
+        if (currentUser == null) {
             Spacer(Modifier.height(8.dp))
             TextButton(
-                onClick = { onNavigate(Screen.Register.route)}) {
+                onClick = { onNavigate(Screen.Register.route) }
+            ) {
                 Text("Si no tienes una cuenta, registrate aquí")
             }
         }

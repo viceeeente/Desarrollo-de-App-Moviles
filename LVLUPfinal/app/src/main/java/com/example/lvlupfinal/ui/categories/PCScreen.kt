@@ -7,16 +7,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.lvlupfinal.data.products.ProductRepository
-import com.example.lvlupfinal.ui.products.ProductCard
+import androidx.compose.runtime.livedata.observeAsState
+import com.example.lvlupfinal.data.products.ProductCard
 import com.example.lvlupfinal.viewmodel.SharedViewModel
+import com.example.lvlupfinal.data.products.Product
+
 @Composable
 fun PCScreen(
     modifier: Modifier = Modifier,
     viewModel: SharedViewModel = viewModel()
 ) {
-    val productos = remember { ProductRepository().getByCategory("PC") }
+    // ✅ Observamos directamente la lista filtrada desde el ViewModel
+    val productosPC by viewModel.productosPC.observeAsState(initial = emptyList<Product>())
     val isLoggedIn by viewModel.isLoggedIn.collectAsState()
+
     val snackbarHostState = remember { SnackbarHostState() }
     var mensajePendiente by remember { mutableStateOf<String?>(null) }
 
@@ -32,7 +36,7 @@ fun PCScreen(
             Text("PC", style = MaterialTheme.typography.headlineMedium)
             Spacer(modifier = Modifier.height(16.dp))
 
-            productos.forEach { producto ->
+            productosPC.forEach { producto ->
                 ProductCard(producto) {
                     if (isLoggedIn) {
                         viewModel.agregarAlCarrito(producto)

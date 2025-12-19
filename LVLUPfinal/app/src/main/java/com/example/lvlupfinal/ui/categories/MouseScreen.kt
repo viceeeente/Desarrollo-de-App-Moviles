@@ -7,16 +7,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.lvlupfinal.data.products.ProductRepository
-import com.example.lvlupfinal.ui.products.ProductCard
+import androidx.compose.runtime.livedata.observeAsState
+import com.example.lvlupfinal.data.products.ProductCard
 import com.example.lvlupfinal.viewmodel.SharedViewModel
+import com.example.lvlupfinal.data.products.Product
+
 @Composable
 fun MouseScreen(
     modifier: Modifier = Modifier,
     viewModel: SharedViewModel = viewModel()
 ) {
-    val productos = remember { ProductRepository().getByCategory("Mouse") }
+    val productosMouse by viewModel.productosMouse.observeAsState(initial = emptyList<Product>())
     val isLoggedIn by viewModel.isLoggedIn.collectAsState()
+
     val snackbarHostState = remember { SnackbarHostState() }
     var mensajePendiente by remember { mutableStateOf<String?>(null) }
 
@@ -32,7 +35,7 @@ fun MouseScreen(
             Text("Mouse", style = MaterialTheme.typography.headlineMedium)
             Spacer(modifier = Modifier.height(16.dp))
 
-            productos.forEach { producto ->
+            productosMouse.forEach { producto ->
                 ProductCard(producto) {
                     if (isLoggedIn) {
                         viewModel.agregarAlCarrito(producto)

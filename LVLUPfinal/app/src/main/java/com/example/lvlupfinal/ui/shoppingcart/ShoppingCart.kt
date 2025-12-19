@@ -1,13 +1,13 @@
-package com.example.lvlupfinal.ui.carrito
+package com.example.lvlupfinal.ui.shoppingcart
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.lvlupfinal.viewmodel.SharedViewModel
-import com.example.lvlupfinal.data.products.Product
+import androidx.compose.foundation.layout.*          // Column, Spacer, padding, height, fillMaxWidth
+import androidx.compose.material3.*                 // MaterialTheme, Text, Button, Card, CardDefaults
+import androidx.compose.runtime.*                   // @Composable, remember, mutableStateOf, collectAsState, getValue, setValue
+import androidx.compose.ui.Modifier                 // Modifier
+import androidx.compose.ui.unit.dp                  // dp para padding y height
+import androidx.lifecycle.viewmodel.compose.viewModel // viewModel() para obtener SharedViewModel
+import com.example.lvlupfinal.viewmodel.SharedViewModel // tu ViewModel compartido
+import com.example.lvlupfinal.data.products.Product // modelo Product
 
 @Composable
 fun CarritoScreen(
@@ -15,7 +15,7 @@ fun CarritoScreen(
     viewModel: SharedViewModel = viewModel(),
     onBackToHome: () -> Unit
 ) {
-    val productosEnCarrito = viewModel.carrito
+    val productosEnCarrito by viewModel.carrito.collectAsState()
 
     Column(modifier = modifier.padding(16.dp)) {
         Text("Carrito", style = MaterialTheme.typography.headlineMedium)
@@ -30,7 +30,7 @@ fun CarritoScreen(
         if (productosEnCarrito.isEmpty()) {
             Text("Tu carrito está vacío.")
         } else {
-            productosEnCarrito.forEach { producto ->
+            productosEnCarrito.forEach { producto: Product ->
                 ProductoEnCarrito(producto)
             }
         }

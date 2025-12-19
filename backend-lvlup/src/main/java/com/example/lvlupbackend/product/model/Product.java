@@ -18,7 +18,7 @@ public class Product {
     private Integer price;
     private Integer stock;
     private String img;
-
+<
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;

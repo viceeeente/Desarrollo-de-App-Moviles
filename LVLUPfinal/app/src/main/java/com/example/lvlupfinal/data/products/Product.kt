@@ -1,11 +1,13 @@
 package com.example.lvlupfinal.data.products
 
-data class Product (
+import com.example.lvlupfinal.data.categories.Category
+
+data class Product(
     val id: Int?,
     val name: String,
-    val category: String,
-    val price: Int,
     val description: String,
-    val img: Int,
-    val stock :Int
+    val price: Int,
+    val stock: Int,
+    val img: String,          // ✅ ahora String
+    val category: Category    // ✅ objeto Category
 )

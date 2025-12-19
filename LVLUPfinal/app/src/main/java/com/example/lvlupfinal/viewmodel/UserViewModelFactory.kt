@@ -3,14 +3,17 @@ package com.example.lvlupfinal.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.lvlupfinal.data.users.UserRepository
+import com.example.lvlupfinal.viewmodel.UserViewModel
 
-class UserViewModelFactory (private val repository: UserRepository) : ViewModelProvider.Factory{
+class UserViewModelFactory(
+    private val repository: UserRepository
+) : ViewModelProvider.Factory {
+
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if(modelClass.isAssignableFrom(UserViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(UserViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return UserViewModelFactory(repository) as T
+            return UserViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
-
     }
 }

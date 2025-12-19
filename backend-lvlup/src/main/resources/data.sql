@@ -1,4 +1,3 @@
--- Categorías (sin ID, se generan automáticamente)
 INSERT INTO category (name) VALUES ('Consolas');
 INSERT INTO category (name) VALUES ('Juegos de mesa');
 INSERT INTO category (name) VALUES ('Mouse');

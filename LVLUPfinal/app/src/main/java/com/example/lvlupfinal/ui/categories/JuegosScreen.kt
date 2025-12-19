@@ -2,28 +2,24 @@ package com.example.lvlupfinal.ui.categories
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.lvlupfinal.data.products.ProductRepository
-import com.example.lvlupfinal.ui.products.ProductCard
+import androidx.compose.runtime.livedata.observeAsState
+import com.example.lvlupfinal.data.products.ProductCard
 import com.example.lvlupfinal.viewmodel.SharedViewModel
+import com.example.lvlupfinal.data.products.Product
 
 @Composable
 fun JuegosScreen(
     modifier: Modifier = Modifier,
     viewModel: SharedViewModel = viewModel()
 ) {
-    val productos = remember { ProductRepository().getByCategory("Juegos de Mesa") }
+    val productosJuegos by viewModel.productosJuegos.observeAsState(initial = emptyList<Product>())
     val isLoggedIn by viewModel.isLoggedIn.collectAsState()
+
     val snackbarHostState = remember { SnackbarHostState() }
     var mensajePendiente by remember { mutableStateOf<String?>(null) }
 
@@ -39,7 +35,7 @@ fun JuegosScreen(
             Text("Juegos", style = MaterialTheme.typography.headlineMedium)
             Spacer(modifier = Modifier.height(16.dp))
 
-            productos.forEach { producto ->
+            productosJuegos.forEach { producto ->
                 ProductCard(producto) {
                     if (isLoggedIn) {
                         viewModel.agregarAlCarrito(producto)

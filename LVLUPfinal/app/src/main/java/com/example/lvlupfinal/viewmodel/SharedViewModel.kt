@@ -1,94 +1,127 @@
 package com.example.lvlupfinal.viewmodel
-import androidx.compose.runtime.mutableStateListOf
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
+import com.example.lvlupfinal.data.RetrofitInstance
 import com.example.lvlupfinal.data.users.User
 import com.example.lvlupfinal.data.products.Product
+import com.example.lvlupfinal.model.UserErrors
+import com.example.lvlupfinal.model.UserUiState
+import com.example.lvlupfinal.model.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-// Estado de la pantalla Home (lista de items de ejemplo)
-data class HomeUiState(
-    val items: List<String> = listOf("1", "2", "3")
-)
-// ViewModel compartido entre Home y Detail
-// Nos permite mantener y compartir el estado de navegación y de selección de items
 class SharedViewModel : ViewModel() {
-    // -------------------------
-// Estado de la pantalla Home
-// -------------------------
-// Estado interno (privado y mutable)
-    private val _homeState = MutableStateFlow(HomeUiState())
-    // Estado expuesto (público y solo lectura)
-    val homeState: StateFlow<HomeUiState> = _homeState.asStateFlow()
-    // -------------------------
-// Estado de navegación (BottomNavigation)
-// -------------------------
-// Pantalla actual (por defecto "home")
-    private val _currentScreen = MutableStateFlow<String>("home")
-    // Expuesto a la UI (solo lectura)
-    val currentScreen: StateFlow<String> = _currentScreen.asStateFlow()
-    // -------------------------
-// Estado del item seleccionado (para Detail)
-// -------------------------
-// Guardamos el ID del item seleccionado (puede ser null si no hay selección)
-    private val _selectedItemId = MutableStateFlow<String?>(null)
-    // Expuesto a la UI (solo lectura)
-    val selectedItemId: StateFlow<String?> = _selectedItemId.asStateFlow()
-// -------------------------
-// Eventos / Acciones del usuario
-// -------------------------
-    /**
-     * Cuando el usuario hace clic en un item de la lista en Home:
-     * - Guardamos el id del item seleccionado
-     * - Cambiamos la pantalla a "detail"
-     */
+
+    private val _users = MutableLiveData<List<User>>()
+    val users: LiveData<List<User>> = _users
+
+    private val _products = MutableLiveData<List<Product>>()
+    val products: LiveData<List<Product>> = _products
+
+    // ✅ filtros por categoría usando category.name
+    val productosConsola: LiveData<List<Product>> = _products.map { list ->
+        list.filter { p -> p.category.name.equals("Consola", ignoreCase = true) }
+    }
+
+    val productosJuegos: LiveData<List<Product>> = _products.map { list ->
+        list.filter { p -> p.category.name.equals("Juegos de Mesa", ignoreCase = true) }
+    }
+
+    val productosMouse: LiveData<List<Product>> = _products.map { list ->
+        list.filter { p -> p.category.name.equals("Mouse", ignoreCase = true) }
+    }
+
+    val productosMousepad: LiveData<List<Product>> = _products.map { list ->
+        list.filter { p -> p.category.name.equals("Alfombrilla", ignoreCase = true) }
+    }
+
+    val productosPC: LiveData<List<Product>> = _products.map { list ->
+        list.filter { p -> p.category.name.equals("PC", ignoreCase = true) }
+    }
+
+    val productosPolera: LiveData<List<Product>> = _products.map { list ->
+        list.filter { p -> p.category.name.equals("Polera", ignoreCase = true) }
+    }
+
+    val productosSillaGamer: LiveData<List<Product>> = _products.map { list ->
+        list.filter { p -> p.category.name.equals("Silla Gamer", ignoreCase = true) }
+    }
+
+    // --- Estado de login ---
     private val _isLoggedIn = MutableStateFlow(false)
-    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
+    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
+
+    fun setLoginState(loggedIn: Boolean) {
+        _isLoggedIn.value = loggedIn
+    }
 
     private val _currentUser = MutableStateFlow<User?>(null)
-    val currentUser: StateFlow<User?> = _currentUser.asStateFlow()
+    val currentUser: StateFlow<User?> = _currentUser
 
-    fun onItemClick(id: String) {
-        _selectedItemId.value = id
-        _currentScreen.value = "detail"
+    fun setCurrentUser(user: User?) {
+        _currentUser.value = user
     }
+
+    fun logout() {
+        _currentUser.value = null
+        _isLoggedIn.value = false
+        limpiarCarrito()
+        onBottonNavSelected(Screen.Home.route)
+    }
+
+    // --- Carrito ---
+    private val _carrito = MutableStateFlow<List<Product>>(emptyList())
+    val carrito: StateFlow<List<Product>> = _carrito
+
+    fun agregarAlCarrito(producto: Product) {
+        _carrito.value = _carrito.value + producto
+    }
+
+    fun eliminarDelCarrito(producto: Product) {
+        _carrito.value = _carrito.value.filter { it.id != producto.id }
+    }
+
+    fun limpiarCarrito() {
+        _carrito.value = emptyList()
+    }
+
+    // --- Estado UI ---
+    private val _userUiState = MutableLiveData(UserUiState())
+    val userUiState: LiveData<UserUiState> = _userUiState
+
+    private val _currentScreen = MutableStateFlow(Screen.Home.route)
+    val currentScreen: StateFlow<String> = _currentScreen
 
     fun onBottonNavSelected(route: String) {
         _currentScreen.value = route
     }
 
-    fun setLoggedIn(value: Boolean) {
-        _isLoggedIn.value = value
-    }
-
-    fun setCurrentUser(user: User?) {
-        android.util.Log.d("SharedVM","setCurrentUser llamado con: $user")
-        _currentUser.value = user }
-
-    fun setCurrentUserFromRepo(load: suspend () -> User?) {
+    // --- Operaciones con usuarios ---
+    fun loadUsers() {
         viewModelScope.launch {
-            val user = load()
-            _currentUser.value = user
-            _isLoggedIn.value = user != null
+            try {
+                val result = RetrofitInstance.userApi.getUsers()
+                _users.postValue(result)
+            } catch (e: Exception) {
+                _users.postValue(emptyList())
+            }
         }
     }
 
-    fun setSelectedItem(id:String) {
-        _selectedItemId.value = id
-    }
-
-    private val _carrito = mutableStateListOf<Product>()
-    val carrito: List<Product> get() = _carrito
-
-    fun agregarAlCarrito(producto: Product) {
-        if (isLoggedIn.value) {
-            _carrito.add(producto)
+    // --- Operaciones con productos ---
+    fun loadProducts() {
+        viewModelScope.launch {
+            try {
+                val result = RetrofitInstance.productApi.getProducts()
+                _products.postValue(result)
+            } catch (e: Exception) {
+                _products.postValue(emptyList())
+            }
         }
     }
-
-
-
 }
