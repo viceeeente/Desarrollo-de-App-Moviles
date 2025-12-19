@@ -7,6 +7,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.lvlupfinal.data.users.User
@@ -26,6 +28,7 @@ fun Register(
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var passwordVisible by remember { mutableStateOf(false) } // 👁️ control de visibilidad
     var address by remember { mutableStateOf("") }
     var ageText by remember { mutableStateOf("") }
     var isSubmitting by remember { mutableStateOf(false) }
@@ -76,6 +79,13 @@ fun Register(
             label = { Text("Contraseña") },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                val iconText = if (passwordVisible) "🙈" else "👁️"
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Text(iconText)
+                }
+            },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -132,7 +142,7 @@ fun Register(
                             if (created != null) {
                                 sharedViewModel.setCurrentUser(created)
                                 sharedViewModel.onBottonNavSelected(Screen.Home.route)
-                                sharedViewModel.setLoginState(true) // ✅ corregido
+                                sharedViewModel.setLoginState(true)
                             } else {
                                 errorMessage = "Error al crear o encontrar el usuario"
                             }
